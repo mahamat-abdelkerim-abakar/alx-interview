@@ -1,16 +1,23 @@
 #!/usr/bin/python3
 """
-Island Perimeter
+This module contains a function that returns the perimeter of an island
+described in grid
 """
 
+
 def island_perimeter(grid):
-    """
-     returns the perimeter of the island described in grid
-    :param grid:
-    :return:
-    """
-    area = 0
-    for row in grid + list(map(list, zip(*grid))):
-        for i1, i2 in zip([0] + row, row + [0]):
-            area += int(i1 != i2)
-    return area
+    """this function returns the perimeter of an island described by grid"""
+    perimeter = 0
+    grid_len = len(grid)
+    for row in range(grid_len):
+        for col in range(len(grid[row])):
+            if grid[row][col] == 1:
+                if row - 1 < 0 or grid[row - 1][col] == 0:
+                    perimeter += 1
+                if col - 1 < 0 or grid[row][col - 1] == 0:
+                    perimeter += 1
+                if col + 1 >= len(grid[row]) or grid[row][col + 1] == 0:
+                    perimeter += 1
+                if row + 1 >= grid_len or grid[row + 1][col] == 0:
+                    perimeter += 1
+    return perimeter
