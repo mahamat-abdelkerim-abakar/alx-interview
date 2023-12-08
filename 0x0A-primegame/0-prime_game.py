@@ -1,78 +1,57 @@
 #!/usr/bin/python3
-"""
-Prime Game
-"""
+"""Module defining isWinner function."""
 
 
-def findMultiples(num, targets):
-    """
-    Finds multiples of a given number within a list
-    """
-    for i in targets:
-        if i % num == 0:
-            targets.remove(i)
-    return targets
+def isWinner(x, nums):
+    """Function to get who has won in prime game"""
+    mariaWinsCount = 0
+    benWinsCount = 0
+
+    for num in nums:
+        roundsSet = list(range(1, num + 1))
+        primesSet = primes_in_range(1, num)
+
+        if not primesSet:
+            benWinsCount += 1
+            continue
+
+        isMariaTurns = True
+
+        while(True):
+            if not primesSet:
+                if isMariaTurns:
+                    benWinsCount += 1
+                else:
+                    mariaWinsCount += 1
+                break
+
+            smallestPrime = primesSet.pop(0)
+            roundsSet.remove(smallestPrime)
+
+            roundsSet = [x for x in roundsSet if x % smallestPrime != 0]
+
+            isMariaTurns = not isMariaTurns
+
+    if mariaWinsCount > benWinsCount:
+        return "Winner: Maria"
+
+    if mariaWinsCount < benWinsCount:
+        return "Winner: Ben"
+
+    return None
 
 
-def isPrime(i):
-    """
-    Check if a number is prime.
-    """
-    if i == 1:
+def is_prime(n):
+    """Returns True if n is prime, else False."""
+    if n < 2:
         return False
-    for j in range(2, i):
-        if i % j == 0:
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
             return False
     return True
 
 
-def findPrimes(n):
-    """
-    Dispatch a given set into prime numbers and non-prime numbers.
-    """
-    counter = 0
-    target = list(n)
-    for i in range(1, len(target) + 1):
-        if isPrime(i):
-            counter += 1
-            target.remove(i)
-            target = findMultiples(i, target)
-        else:
-            pass
-    return counter
-
-
-def isWinner(x, nums):
-    """
-    Maria and Ben are playing a game.Given a set of consecutive integers
-    starting from 1 up to and including n, they take turns choosing a
-    prime number from the set and removing that number and its
-    multiples from the set.
-    The player that cannot make a move loses the game.
-
-    They play x rounds of the game, where n may be different for each round.
-    Assuming Maria always goes first and both players play optimally,
-    determine who the winner of each game is.
-    """
-    players = {'Maria': 0, 'Ben': 0}
-    cluster = set()
-    for elem in range(x):
-        nums.sort()
-        num = nums[elem]
-        for i in range(1, num + 1):
-            cluster.add(i)
-            if i == num + 1:
-                break
-        temp = findPrimes(cluster)
-
-        if temp % 2 == 0:
-            players['Ben'] += 1
-        elif temp % 2 != 0:
-            players['Maria'] += 1
-
-    if players['Maria'] > players['Ben']:
-        return 'Maria'
-    elif players['Maria'] < players['Ben']:
-        return 'Ben'
-    else:
-        return None
+def primes_in_range(start, end):
+    """Returns a list of prime numbers between start and end (inclusive)."""
+    primes = [n for n in range(start, end+1) if is_prime(n)]
+    return primes
