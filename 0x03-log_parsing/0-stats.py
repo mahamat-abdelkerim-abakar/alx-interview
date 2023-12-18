@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 """
-Module that parses a log and prints stats to stdout
+module contains a script that reads stdin line by line and computes metrics
 """
-from sys import stdin
+import sys
+
 
 status_codes = {
     "200": 0,
@@ -15,12 +16,12 @@ status_codes = {
     "500": 0
 }
 
-size = 0
+file_size = 0
 
 
-def print_stats():
-    """Prints the accumulated logs"""
-    print("File size: {}".format(size))
+def print_metrics():
+    """prints of the logs"""
+    print("File size: {}".format(file_size))
     for status in sorted(status_codes.keys()):
         if status_codes[status]:
             print("{}: {}".format(status, status_codes[status]))
@@ -29,19 +30,19 @@ def print_stats():
 if __name__ == "__main__":
     count = 0
     try:
-        for line in stdin:
+        for line in sys.stdin:
             try:
-                items = line.split()
-                size += int(items[-1])
-                if items[-2] in status_codes:
-                    status_codes[items[-2]] += 1
-            except:
+                elems = line.split()
+                file_size += int(elems[-1])
+                if elems[-2] in status_codes:
+                    status_codes[elems[-2]] += 1
+            except Exception:
                 pass
             if count == 9:
-                print_stats()
+                print_metrics()
                 count = -1
             count += 1
     except KeyboardInterrupt:
-        print_stats()
+        print_metrics()
         raise
-    print_stats()
+    print_metrics()
