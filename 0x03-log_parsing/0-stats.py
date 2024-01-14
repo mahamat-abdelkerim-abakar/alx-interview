@@ -1,39 +1,56 @@
 #!/usr/bin/python3
-"""
-Log parsing
-"""
-
+"""Solving N Queens Problem using backtracking"""
 import sys
 
-if __name__ == '__main__':
 
-    filesize, count = 0, 0
-    codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
-    stats = {k: 0 for k in codes}
+def printSolution(board, n):
+    """Print allocated positions to the queen"""
+    solution = []
 
-    def print_stats(stats: dict, file_size: int) -> None:
-        print("File size: {:d}".format(filesize))
-        for k, v in sorted(stats.items()):
-            if v:
-                print("{}: {}".format(k, v))
+    for r in range(n):
+        for c in range(n):
+            if c == board[r]:
+                solution.append([r, c])
+    print(solution)
 
-    try:
-        for line in sys.stdin:
-            count += 1
-            data = line.split()
-            try:
-                status_code = data[-2]
-                if status_code in stats:
-                    stats[status_code] += 1
-            except BaseException:
-                pass
-            try:
-                filesize += int(data[-1])
-            except BaseException:
-                pass
-            if count % 10 == 0:
-                print_stats(stats, filesize)
-        print_stats(stats, filesize)
-    except KeyboardInterrupt:
-        print_stats(stats, filesize)
-        raise
+
+def is_position_safe(board, r, c, row):
+    """Checks if the position is safe for the queen"""
+    return board[r] in (c, c - r + row, r - row + c)
+
+
+def recursive_solve(board, row, n):
+    """Find all safe positions where the queen can be allocated"""
+    if row == n:
+        printSolution(board, n)
+
+    else:
+        for c in range(n):
+            allowed = True
+            for r in range(row):
+                if is_position_safe(board, r, c, row):
+                    allowed = False
+            if allowed:
+                board[row] = c
+                recursive_solve(board, row + 1, n)
+
+
+def create_board(size):
+    """Generates the board"""
+    return [0 * size for i in range(size)]
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+    if sys.argv[1].isdigit() is False:
+        print("N must be a number")
+        sys.exit(1)
+    if int(sys.argv[1]) < 4:
+        print("N must be at least 4")
+        sys.exit(1)
+
+    N = int(sys.argv[1])
+    myboard = create_board(N)
+    solutions = recursive_solve(myboard, 0, N)
